@@ -1,0 +1,39 @@
+steps:
+  # Install Terraform
+  - name: 'hashicorp/terraform:1.5.0'
+    args: ['version']
+
+  # Initialize Terraform with backend configuration
+  - name: 'hashicorp/terraform:1.5.0'
+    args: [
+      'init',
+      '-backend-config=bucket=gorilla-clinic-terraform-state',
+      '-backend-config=prefix=terraform/state/prod'
+    ]
+    dir: 'terraform/environments/prod'
+
+  # Terraform Plan
+  - name: 'hashicorp/terraform:1.5.0'
+    args: [
+      'plan',
+      '-var-file=prod.tfvars',
+      '-out=tfplan'
+    ]
+    dir: 'terraform/environments/prod'
+
+  # Terraform Apply
+  - name: 'hashicorp/terraform:1.5.0'
+    args: [
+      'apply',
+      '-auto-approve',
+      'tfplan'
+    ]
+    dir: 'terraform/environments/prod'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+
+substitutions:
+  _ENVIRONMENT: prod
+
+timeout: 1800s

@@ -1,0 +1,86 @@
+steps:
+  # Build the container image with multiple tags
+  - name: 'gcr.io/cloud-builders/docker'
+    args: [
+      'build',
+      '-t', 'gcr.io/$PROJECT_ID/petclinic:$COMMIT_SHA',
+      '-t', 'gcr.io/$PROJECT_ID/petclinic:latest',
+      '.'
+    ]
+    id: 'build'
+
+  # Push both tags to Container Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/petclinic:$COMMIT_SHA']
+    id: 'push-sha'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/petclinic:latest']
+    id: 'push-latest'
+
+  # Deploy container image to Cloud Run (Primary Region)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'petclinic-${_ENVIRONMENT}-primary'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/petclinic:latest'
+      - '--region'
+      - '${_PRIMARY_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--min-instances'
+      - '${_MIN_INSTANCES}'
+      - '--max-instances'
+      - '${_MAX_INSTANCES}'
+      - '--cpu'
+      - '4'
+      - '--memory'
+      - '4Gi'
+      - '--no-cpu-throttling'
+      - '--port'
+      - '8080'
+      - '--concurrency'
+      - '150'
+
+  # Deploy container image to Cloud Run (Secondary Region)
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      - 'run'
+      - 'deploy'
+      - 'petclinic-${_ENVIRONMENT}-secondary'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/petclinic:latest'
+      - '--region'
+      - '${_SECONDARY_REGION}'
+      - '--platform'
+      - 'managed'
+      - '--allow-unauthenticated'
+      - '--min-instances'
+      - '${_MIN_INSTANCES}'
+      - '--max-instances'
+      - '${_MAX_INSTANCES}'
+      - '--cpu'
+      - '4'
+      - '--memory'
+      - '4Gi'
+      - '--no-cpu-throttling'
+      - '--port'
+      - '8080'
+      - '--concurrency'
+      - '150'
+
+substitutions:
+  _ENVIRONMENT: prod
+  _PRIMARY_REGION: europe-west4
+  _SECONDARY_REGION: europe-west3
+  _MIN_INSTANCES: "30"    # Warm pool for quick response
+  _MAX_INSTANCES: "300"   # Handle peak load with buffer
+
+images:
+  - 'gcr.io/$PROJECT_ID/petclinic:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/petclinic:latest'
