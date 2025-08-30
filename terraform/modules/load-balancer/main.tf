@@ -11,9 +11,14 @@ resource "google_compute_managed_ssl_certificate" "gorilla_clinic_cert" {
   project     = var.project_id
 
   managed {
-    domains = ["${var.name}.example.com"] # Replace with your actual domain
+    domains = [var.domain_name]
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
+
 
 # Create HTTPS Load Balancer with Cloud Run backend
 resource "google_compute_backend_service" "gorilla_clinic_backend" {
@@ -70,6 +75,10 @@ resource "google_compute_target_https_proxy" "gorilla_clinic_proxy" {
   project         = var.project_id
   url_map         = google_compute_url_map.gorilla_clinic_url_map.id
   ssl_certificates = [google_compute_managed_ssl_certificate.gorilla_clinic_cert.id]
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # Create forwarding rule

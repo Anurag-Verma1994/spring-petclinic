@@ -4,23 +4,13 @@ resource "google_cloudbuild_trigger" "app_trigger" {
   description = "Build and deploy PetClinic application when Java code changes"
   project     = var.project_id
   location    = var.location
-  
-  # Specify the path to the Cloud Build configuration file.
-  filename = "cloudbuild.yaml"
-
-  github {
-    owner = var.github_owner
-    name  = var.github_repo
-    push {
-      branch = var.branch_pattern
-    }
-  }
+  filename    = "cloudbuild.yaml"
+  disabled    = false
 
   included_files = [
     "src/**",
     "pom.xml",
-    "Dockerfile",
-    "cloudbuild.yaml"
+    "Dockerfile"
   ]
 
   ignored_files = [
@@ -28,7 +18,20 @@ resource "google_cloudbuild_trigger" "app_trigger" {
     "*.tf"
   ]
 
-  service_account = var.service_account_email
+  service_account = "projects/${var.project_id}/serviceAccounts/${var.service_account_email}"
+
+  approval_config {
+    approval_required = false
+  }
+
+  github {
+    name  = var.github_repo
+    owner = var.github_owner
+    push {
+      branch       = "^${var.branch_pattern}$"
+      invert_regex = false
+    }
+  }
 }
 
 # Infrastructure deployment trigger (for Terraform changes)
@@ -37,37 +40,37 @@ resource "google_cloudbuild_trigger" "infrastructure_trigger" {
   description = "Deploy infrastructure when Terraform files change"
   project     = var.project_id
   location    = var.location
-  
-  # Specify the path to the Cloud Build configuration file.
-  filename = "cloudbuild-terraform.yaml"
-
-  github {
-    owner = var.github_owner
-    name  = var.github_repo
-    push {
-      branch = var.branch_pattern
-    }
-  }
+  filename    = "cloudbuild-terraform.yaml"
+  disabled    = false
 
   included_files = [
     "terraform/**",
     "*.tf"
   ]
 
+  ignored_files = [
+    "src/**",
+    "pom.xml",
+    "Dockerfile",
+    "cloudbuild.yaml"
+  ]
+
+  service_account = "projects/${var.project_id}/serviceAccounts/${var.service_account_email}"
+
   substitutions = {
-    _ENVIRONMENT = "prod"
+    "_ENVIRONMENT" = "prod"
   }
-  service_account = var.service_account_email
-}
 
+  approval_config {
+    approval_required = false
+  }
 
-# Outputs
-output "app_trigger_id" {
-  value       = google_cloudbuild_trigger.app_trigger.id
-  description = "The ID of the application deployment trigger"
-}
-
-output "infrastructure_trigger_id" {
-  value       = google_cloudbuild_trigger.infrastructure_trigger.id
-  description = "The ID of the infrastructure deployment trigger"
+  github {
+    name  = var.github_repo
+    owner = var.github_owner
+    push {
+      branch       = "^${var.branch_pattern}$"
+      invert_regex = false
+    }
+  }
 }

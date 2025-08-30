@@ -39,6 +39,7 @@ resource "google_service_account" "petclinic_sa" {
 resource "google_project_iam_member" "cloudbuild_roles" {
   for_each = toset([
     "roles/cloudbuild.builds.builder",
+    "roles/cloudbuild.builds.editor",
     "roles/run.admin",                   # Correct role for Cloud Run administration
     "roles/iam.serviceAccountUser",
     "roles/storage.admin"                # Required for accessing artifacts and build cache
@@ -89,7 +90,9 @@ module "cloud_build" {
   github_owner         = var.github_owner
   github_repo          = var.github_repo
   branch_pattern       = var.branch_pattern
+  repository_id        = var.repository_id
   service_account_email = google_service_account.petclinic_sa.email
+  location             = var.location
 
   depends_on = [
     google_project_service.required_apis,
@@ -108,6 +111,7 @@ module "load_balancer" {
   primary_service_region  = var.primary_region
   secondary_service_name  = module.cloud_run_secondary.service_name
   secondary_service_region = var.secondary_region
+  domain_name            = var.domain_name
 
   depends_on = [
     module.cloud_run_primary,

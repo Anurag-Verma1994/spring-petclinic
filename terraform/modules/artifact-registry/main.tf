@@ -18,12 +18,4 @@ resource "google_artifact_registry_repository_iam_member" "repository_iam" {
   member     = "serviceAccount:${var.project_id}@cloudbuild.gserviceaccount.com"
 }
 
-output "repository_url" {
-  value = "${var.location}-docker.pkg.dev/${var.project_id}/${var.repository_id}"
-  description = "URL of the Artifact Registry repository"
-}
 
-output "repository_id" {
-  value = google_artifact_registry_repository.repo.repository_id
-  description = "ID of the created repository"
-}

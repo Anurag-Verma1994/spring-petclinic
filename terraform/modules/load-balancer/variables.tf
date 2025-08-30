@@ -27,3 +27,8 @@ variable "secondary_service_region" {
   description = "Region of the secondary Cloud Run service"
   type        = string
 }
+
+variable "domain_name" {
+  description = "Domain name for the SSL certificate"
+  type        = string
+}
