@@ -49,3 +49,21 @@ out/
 _site/
 *.css
 !petclinic.css
+
+### Terraform ###
+.terraform/
+*.tfstate
+*.tfstate.*
+.terraform.lock.hcl
+terraform.tfvars
+*.tfvars.json
+**/.terraform/*
+**/.terraform.lock.hcl
+**/terraform.tfstate
+**/terraform.tfstate.*
+**/terraform.tfvars
+
+### Google Cloud ###
+*.tar.gz
+google-cloud-sdk/
+google-cloud-cli-*.tar.gz
