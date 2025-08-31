@@ -88,4 +88,11 @@ variable "secondary_service_name" {
   type        = string
 }
 
+variable "environment_branch_mappings" {
+  description = "Map of environments to their corresponding branch and approval configurations"
+  type = map(object({
+    branch = string
+    approval_required = bool
+  }))
+}
 

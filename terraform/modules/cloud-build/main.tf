@@ -37,20 +37,7 @@ resource "google_cloudbuild_trigger" "app_trigger" {
 
 # Infrastructure deployment triggers for each environment
 resource "google_cloudbuild_trigger" "infrastructure_triggers" {
-  for_each = {
-    prod = {
-      branch = "main"
-      approval_required = false
-    }
-    staging = {
-      branch = "staging"
-      approval_required = false
-    }
-    test = {
-      branch = "test"
-      approval_required = false
-    }
-  }
+  for_each = var.environment_branch_mappings
 
   name        = "petclinic-terraform-${each.key}-trigger"
   description = "Deploy infrastructure for ${each.key} environment when Terraform files change"
