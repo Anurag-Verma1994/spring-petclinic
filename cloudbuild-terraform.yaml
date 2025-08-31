@@ -4,42 +4,20 @@ steps:
     args: ['version']
     id: 'tf-version'
 
-  # Pull existing state
-  - name: 'gcr.io/cloud-builders/gsutil'
-    args: ['cp', 
-           'gs://gorilla-clinic-terraform-state/terraform/state/${_ENVIRONMENT}/default.tfstate',
-           '/workspace/terraform/gcp/infra/default.tfstate']
-    id: 'pull-state'
-    allowFailure: true
-
-  # Initialize Terraform with backend configuration and reconfigure
+  # Initialize Terraform with backend configuration
   - name: 'hashicorp/terraform:1.5.0'
     args: [
       'init',
-      '-reconfigure',
       '-backend-config=bucket=gorilla-clinic-terraform-state',
       '-backend-config=prefix=terraform/state/${_ENVIRONMENT}'
     ]
     dir: 'terraform/gcp/infra'
     id: 'tf-init'
 
-  # State migration if needed
-  - name: 'hashicorp/terraform:1.5.0'
-    args: [
-      'state',
-      'replace-provider',
-      'registry.terraform.io/-/google',
-      'registry.terraform.io/hashicorp/google'
-    ]
-    dir: 'terraform/gcp/infra'
-    id: 'tf-state-migrate'
-    allowFailure: true
-
   # Terraform Plan
   - name: 'hashicorp/terraform:1.5.0'
     args: [
       'plan',
-      '-refresh=true',
       '-var-file=tfvars/${_ENVIRONMENT}.tfvars',
       '-out=tfplan'
     ]

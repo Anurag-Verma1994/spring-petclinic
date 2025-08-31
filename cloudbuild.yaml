@@ -44,7 +44,7 @@ steps:
       - '--port'
       - '8080'
       - '--concurrency'
-      - '150'
+      - '80'
 
   # Deploy container image to Cloud Run (Secondary Region)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -72,14 +72,14 @@ steps:
       - '--port'
       - '8080'
       - '--concurrency'
-      - '150'
+      - '80'
 
 substitutions:
   _ENVIRONMENT: prod
   _PRIMARY_REGION: europe-west4
   _SECONDARY_REGION: europe-west3
-  _MIN_INSTANCES: "30"    # Warm pool for quick response
-  _MAX_INSTANCES: "300"   # Handle peak load with buffer
+  _MIN_INSTANCES: "10"    # Warm pool for quick response
+  _MAX_INSTANCES: "400"   # Handle peak load with buffer
 
 options:
   logging: CLOUD_LOGGING_ONLY
