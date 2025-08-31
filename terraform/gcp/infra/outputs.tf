@@ -12,5 +12,5 @@ output "app_trigger_id" {
 
 output "infrastructure_trigger_id" {
   description = "ID of the infrastructure trigger"
-  value = module.cloud_build.infrastructure_trigger_id
+  value       = module.cloud_build.infrastructure_trigger_id
 }

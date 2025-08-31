@@ -45,5 +45,5 @@ output "database_password_secret" {
 
 output "database_connection_secret" {
   description = "The name of the secret containing the database connection information"
-  value       = data.google_secret_manager_secret.db_connection.name
+  value       = data.google_secret_manager_secret_version.db_connection.secret
 }

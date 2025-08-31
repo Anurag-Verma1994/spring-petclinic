@@ -16,8 +16,4 @@ lb_name = "petclinic-prod"
 image = "gcr.io/assessment-vermaanurag1794/petclinic:latest"
 primary_service_name = "petclinic-prod-primary"
 secondary_service_name = "petclinic-prod-secondary"
-
-# Database configuration
 database_tier = "db-custom-2-4096"
-
-

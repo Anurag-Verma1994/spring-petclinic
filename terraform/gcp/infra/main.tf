@@ -1,5 +1,6 @@
 provider "google" {
   project = var.project_id
+  region  = var.primary_region
 }
 
 # Enable required APIs
@@ -14,12 +15,12 @@ resource "google_project_service" "required_apis" {
     "sqladmin.googleapis.com",
     "secretmanager.googleapis.com"
   ])
-  
+
   project = var.project_id
   service = each.value
 
   disable_dependent_services = true
-  disable_on_destroy        = false
+  disable_on_destroy         = false
 }
 
 # Create service account
@@ -34,14 +35,14 @@ resource "google_project_iam_member" "cloudbuild_roles" {
   for_each = toset([
     "roles/cloudbuild.builds.builder",
     "roles/cloudbuild.builds.editor",
-    "roles/run.admin",                   
+    "roles/run.admin",
     "roles/iam.serviceAccountUser",
     "roles/compute.admin",
     "roles/iam.serviceAccountAdmin",
     "roles/serviceusage.serviceUsageAdmin",
-    "roles/storage.admin"                
+    "roles/storage.admin"
   ])
-  
+
   project = var.project_id
   role    = each.value
   member  = "serviceAccount:${google_service_account.petclinic_sa.email}"
@@ -51,7 +52,7 @@ resource "google_project_iam_member" "cloudbuild_roles" {
 module "cloud_run_primary" {
   source = "../../modules/cloud-run"
 
-  project_id             = var.project_id
+  project_id            = var.project_id
   region                = var.primary_region
   service_name          = "petclinic-${var.environment}-primary"
   image                 = var.image
@@ -68,7 +69,7 @@ module "cloud_run_primary" {
 module "cloud_run_secondary" {
   source = "../../modules/cloud-run"
 
-  project_id             = var.project_id
+  project_id            = var.project_id
   region                = var.secondary_region
   service_name          = "petclinic-${var.environment}-secondary"
   image                 = var.image
@@ -86,13 +87,13 @@ module "cloud_build" {
   source = "../../modules/cloud-build"
 
   project_id            = var.project_id
-  github_owner         = var.github_owner
-  github_repo          = var.github_repo
-  branch_pattern       = var.branch_pattern
-  repository_id        = var.repository_id
+  github_owner          = var.github_owner
+  github_repo           = var.github_repo
+  branch_pattern        = var.branch_pattern
+  repository_id         = var.repository_id
   service_account_email = google_service_account.petclinic_sa.email
-  location             = var.location
-  environment          = var.environment
+  location              = var.location
+  environment           = var.environment
 
   depends_on = [
     google_project_service.required_apis,
@@ -109,9 +110,6 @@ module "database" {
   environment      = var.environment
   region          = var.primary_region
   secondary_region = var.secondary_region
-  database_name    = "petclinic"
-  database_tier    = var.database_tier
-
 
   depends_on = [google_project_service.required_apis]
 }
@@ -129,13 +127,13 @@ resource "google_project_iam_member" "secret_accessor" {
 module "load_balancer" {
   source = "../../modules/load-balancer"
 
-  project_id              = var.project_id
-  name                    = var.lb_name
-  primary_service_name    = module.cloud_run_primary.service_name
-  primary_service_region  = var.primary_region
-  secondary_service_name  = module.cloud_run_secondary.service_name
+  project_id               = var.project_id
+  name                     = var.lb_name
+  primary_service_name     = module.cloud_run_primary.service_name
+  primary_service_region   = var.primary_region
+  secondary_service_name   = module.cloud_run_secondary.service_name
   secondary_service_region = var.secondary_region
-  domain_name            = var.domain_name
+  domain_name              = var.domain_name
 
   depends_on = [
     module.cloud_run_primary,
@@ -147,9 +145,9 @@ module "load_balancer" {
 module "dns" {
   source = "../../modules/dns"
 
-  project_id    = var.project_id
-  domain_name   = var.domain_name
-  global_lb_ip  = module.load_balancer.load_balancer_ip
+  project_id   = var.project_id
+  domain_name  = var.domain_name
+  global_lb_ip = module.load_balancer.load_balancer_ip
 
   depends_on = [
     module.load_balancer

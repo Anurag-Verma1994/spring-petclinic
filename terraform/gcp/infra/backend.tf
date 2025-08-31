@@ -1,6 +1,6 @@
 terraform {
   required_version = ">= 1.0.0"
-  
+
   backend "gcs" {
     bucket = "gorilla-clinic-terraform-state"
     prefix = "terraform/state/prod"
