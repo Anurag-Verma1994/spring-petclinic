@@ -52,6 +52,7 @@ resource "google_project_iam_member" "cloudbuild_roles" {
   member  = "serviceAccount:${google_service_account.petclinic_sa.email}"
 }
 
+
 # Primary region Cloud Run service
 module "cloud_run_primary" {
   source = "../../modules/cloud-run"
