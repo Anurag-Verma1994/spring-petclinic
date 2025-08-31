@@ -35,10 +35,25 @@ resource "google_cloudbuild_trigger" "app_trigger" {
   }
 }
 
-# Infrastructure deployment trigger (for Terraform changes)
-resource "google_cloudbuild_trigger" "infrastructure_trigger" {
-  name        = "petclinic-terraform-trigger"
-  description = "Deploy infrastructure when Terraform files change"
+# Infrastructure deployment triggers for each environment
+resource "google_cloudbuild_trigger" "infrastructure_triggers" {
+  for_each = {
+    prod = {
+      branch = "main"
+      approval_required = false
+    }
+    staging = {
+      branch = "staging"
+      approval_required = false
+    }
+    test = {
+      branch = "test"
+      approval_required = false
+    }
+  }
+
+  name        = "petclinic-terraform-${each.key}-trigger"
+  description = "Deploy infrastructure for ${each.key} environment when Terraform files change"
   project     = var.project_id
   location    = var.location
   filename    = "cloudbuild-terraform.yaml"
@@ -60,18 +75,18 @@ resource "google_cloudbuild_trigger" "infrastructure_trigger" {
   service_account = "projects/${var.project_id}/serviceAccounts/${var.service_account_email}"
 
   substitutions = {
-    "_ENVIRONMENT" = "prod"
+    "_ENVIRONMENT" = each.key
   }
 
   approval_config {
-    approval_required = false
+    approval_required = each.value.approval_required
   }
 
   github {
     name  = var.github_repo
     owner = var.github_owner
     push {
-      branch       = "^${var.branch_pattern}$"
+      branch       = "^${each.value.branch}$"
       invert_regex = false
     }
   }
