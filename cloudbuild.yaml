@@ -81,6 +81,9 @@ substitutions:
   _MIN_INSTANCES: "30"    # Warm pool for quick response
   _MAX_INSTANCES: "300"   # Handle peak load with buffer
 
+options:
+  logging: CLOUD_LOGGING_ONLY
+
 images:
   - 'gcr.io/$PROJECT_ID/petclinic:$COMMIT_SHA'
   - 'gcr.io/$PROJECT_ID/petclinic:latest'
