@@ -108,18 +108,6 @@ module "cloud_build" {
   ]
 }
 
-# Database configuration
-module "database" {
-  source = "../../modules/database"
-
-  project_id       = var.project_id
-  environment      = var.environment
-  region          = var.primary_region
-  secondary_region = var.secondary_region
-
-  depends_on = [google_project_service.required_apis]
-}
-
 # Load Balancer configuration
 module "load_balancer" {
   source = "../../modules/load-balancer"

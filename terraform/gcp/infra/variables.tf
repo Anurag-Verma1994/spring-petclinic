@@ -48,12 +48,6 @@ variable "image" {
   type        = string
 }
 
-variable "database_tier" {
-  description = "The machine type for the database instance"
-  type        = string
-}
-
-
 
 variable "github_owner" {
   description = "GitHub repository owner"
