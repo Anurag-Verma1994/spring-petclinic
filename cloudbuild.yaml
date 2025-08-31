@@ -45,18 +45,6 @@ steps:
       - '8080'
       - '--concurrency'
       - '80'
-      - '--set-env-vars'
-      - 'SPRING_PROFILES_ACTIVE=postgres'
-      - '--set-secrets'
-      - 'POSTGRES_HOST=petclinic-${_ENVIRONMENT}-db-host:latest'
-      - '--set-secrets'
-      - 'POSTGRES_PORT=petclinic-${_ENVIRONMENT}-db-port:latest'
-      - '--set-secrets'
-      - 'POSTGRES_DB=petclinic-${_ENVIRONMENT}-db-database:latest'
-      - '--set-secrets'
-      - 'POSTGRES_USER=petclinic-${_ENVIRONMENT}-db-user:latest'
-      - '--set-secrets'
-      - 'POSTGRES_PASSWORD=petclinic-${_ENVIRONMENT}-db-password:latest'
 
   # Deploy container image to Cloud Run (Secondary Region)
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -85,19 +73,6 @@ steps:
       - '8080'
       - '--concurrency'
       - '80'
-      - '--set-env-vars'
-      - 'SPRING_PROFILES_ACTIVE=postgres'
-      - '--set-secrets'
-      - 'POSTGRES_HOST=petclinic-${_ENVIRONMENT}-db-host:latest'
-      - '--set-secrets'
-      - 'POSTGRES_PORT=petclinic-${_ENVIRONMENT}-db-port:latest'
-      - '--set-secrets'
-      - 'POSTGRES_DB=petclinic-${_ENVIRONMENT}-db-database:latest'
-      - '--set-secrets'
-      - 'POSTGRES_USER=petclinic-${_ENVIRONMENT}-db-user:latest'
-      - '--set-secrets'
-      - 'POSTGRES_PASSWORD=petclinic-${_ENVIRONMENT}-db-password:latest'
-
 
 substitutions:
   _ENVIRONMENT: prod
