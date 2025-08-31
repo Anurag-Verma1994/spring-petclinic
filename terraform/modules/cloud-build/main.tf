@@ -10,7 +10,8 @@ resource "google_cloudbuild_trigger" "app_trigger" {
   included_files = [
     "src/**",
     "pom.xml",
-    "Dockerfile"
+    "Dockerfile",
+    "cloudbuild.yaml"
   ]
 
   ignored_files = [
@@ -45,7 +46,8 @@ resource "google_cloudbuild_trigger" "infrastructure_trigger" {
 
   included_files = [
     "terraform/**",
-    "*.tf"
+    "*.tf",
+    "cloudbuild-terraform.yaml"
   ]
 
   ignored_files = [
