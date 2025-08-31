@@ -50,6 +50,17 @@ _site/
 *.css
 
 ### Terraform ###
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate*
+*.tfplan
+
+### macOS ###
+.DS_Store
+.AppleDouble
+.LSOverride
+
+### Terraform ###
 # Local .terraform directories
 **/.terraform/*
 
