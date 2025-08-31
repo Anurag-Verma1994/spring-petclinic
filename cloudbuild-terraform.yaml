@@ -14,6 +14,17 @@ steps:
     dir: 'terraform/gcp/infra'
     id: 'tf-init'
 
+  # Import existing service account if needed
+  - name: 'hashicorp/terraform:1.5.0'
+    args: [
+      'import',
+      'google_service_account.petclinic_sa',
+      'projects/assessment-vermaanurag1794/serviceAccounts/petclinic-sa@assessment-vermaanurag1794.iam.gserviceaccount.com'
+    ]
+    dir: 'terraform/gcp/infra'
+    id: 'tf-import'
+    allowFailure: true
+
   # Terraform Plan
   - name: 'hashicorp/terraform:1.5.0'
     args: [
