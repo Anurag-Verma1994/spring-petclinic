@@ -1,14 +1,8 @@
 steps:
-  # Set up authentication for the service account
-  - name: 'gcr.io/cloud-builders/gcloud'
-    args:
-      - 'auth'
-      - 'activate-service-account'
-      - 'petclinic-sa@assessment-vermaanurag1794.iam.gserviceaccount.com'
-
   # Install Terraform
   - name: 'hashicorp/terraform:1.5.0'
     args: ['version']
+    id: 'tf-version'
 
   # Initialize Terraform with backend configuration
   - name: 'hashicorp/terraform:1.5.0'
@@ -18,8 +12,7 @@ steps:
       '-backend-config=prefix=terraform/state'
     ]
     dir: 'terraform/environments/prod'
-    env:
-      - 'GOOGLE_CLOUD_SERVICE_ACCOUNT=petclinic-sa@assessment-vermaanurag1794.iam.gserviceaccount.com'
+    id: 'tf-init'
 
   # Terraform Plan
   - name: 'hashicorp/terraform:1.5.0'
@@ -29,8 +22,7 @@ steps:
       '-out=tfplan'
     ]
     dir: 'terraform/environments/prod'
-    env:
-      - 'GOOGLE_CLOUD_SERVICE_ACCOUNT=petclinic-sa@assessment-vermaanurag1794.iam.gserviceaccount.com'
+    id: 'tf-plan'
 
   # Terraform Apply
   - name: 'hashicorp/terraform:1.5.0'
@@ -40,12 +32,10 @@ steps:
       'tfplan'
     ]
     dir: 'terraform/environments/prod'
-    env:
-      - 'GOOGLE_CLOUD_SERVICE_ACCOUNT=petclinic-sa@assessment-vermaanurag1794.iam.gserviceaccount.com'
+    id: 'tf-apply'
 
 options:
   logging: CLOUD_LOGGING_ONLY
-  serviceAccount: 'projects/assessment-vermaanurag1794/serviceAccounts/petclinic-sa@assessment-vermaanurag1794.iam.gserviceaccount.com'
 
 substitutions:
   _ENVIRONMENT: prod
