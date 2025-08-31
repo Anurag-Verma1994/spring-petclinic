@@ -44,6 +44,7 @@ resource "google_project_iam_member" "cloudbuild_roles" {
     "roles/secretmanager.secretAccessor",
     "roles/secretmanager.admin",
     "roles/cloudsql.admin",
+    "roles/cloudsql.client",
     "roles/resourcemanager.projectIamAdmin"
   ])
 
