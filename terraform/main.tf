@@ -47,7 +47,7 @@ resource "google_project_iam_member" "cloudbuild_roles" {
 
 # Primary region Cloud Run service
 module "cloud_run_primary" {
-  source = "../../modules/cloud-run"
+  source = "./modules/cloud-run"
 
   project_id             = var.project_id
   region                = var.primary_region
@@ -63,7 +63,7 @@ module "cloud_run_primary" {
 
 # Secondary region Cloud Run service
 module "cloud_run_secondary" {
-  source = "../../modules/cloud-run"
+  source = "./modules/cloud-run"
 
   project_id             = var.project_id
   region                = var.secondary_region
@@ -79,7 +79,7 @@ module "cloud_run_secondary" {
 
 # Cloud Build configuration
 module "cloud_build" {
-  source = "../../modules/cloud-build"
+  source = "./modules/cloud-build"
 
   project_id            = var.project_id
   github_owner         = var.github_owner
@@ -98,7 +98,7 @@ module "cloud_build" {
 
 # Load Balancer configuration
 module "load_balancer" {
-  source = "../../modules/load-balancer"
+  source = "./modules/load-balancer"
 
   project_id              = var.project_id
   name                    = var.lb_name
@@ -116,7 +116,7 @@ module "load_balancer" {
 
 # DNS configuration
 module "dns" {
-  source = "../../modules/dns"
+  source = "./modules/dns"
 
   project_id    = var.project_id
   domain_name   = var.domain_name
