@@ -117,15 +117,6 @@ substitutions:
   _MIN_INSTANCES: "10"    # Warm pool for quick response
   _MAX_INSTANCES: "400"   # Handle peak load with buffer
 
-availableSecrets:
-  secretManager:
-    - versionName: projects/$PROJECT_ID/secrets/petclinic-${_ENVIRONMENT}-db-username/versions/latest
-      env: 'DB_USERNAME'
-    - versionName: projects/$PROJECT_ID/secrets/petclinic-${_ENVIRONMENT}-db-password/versions/latest
-      env: 'DB_PASSWORD'
-    - versionName: projects/$PROJECT_ID/secrets/petclinic-${_ENVIRONMENT}-db-connection/versions/latest
-      env: 'DB_CONNECTION'
-
 options:
   logging: CLOUD_LOGGING_ONLY
 
