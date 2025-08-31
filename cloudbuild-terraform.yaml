@@ -8,11 +8,10 @@ steps:
   - name: 'hashicorp/terraform:1.5.0'
     args: [
       'init',
-      '-reconfigure',
       '-backend-config=bucket=gorilla-clinic-terraform-state',
       '-backend-config=prefix=terraform/state/prod'
     ]
-    dir: 'terraform'
+    dir: 'terraform/infra'
     id: 'tf-init'
 
   # Terraform Plan
@@ -22,7 +21,7 @@ steps:
       '-var-file=tfvars/${_ENVIRONMENT}.tfvars',
       '-out=tfplan'
     ]
-    dir: 'terraform'
+    dir: 'terraform/infra'
     id: 'tf-plan'
 
   # Terraform Apply
@@ -32,7 +31,7 @@ steps:
       '-auto-approve',
       'tfplan'
     ]
-    dir: 'terraform'
+    dir: 'terraform/infra'
     id: 'tf-apply'
 
 options:
