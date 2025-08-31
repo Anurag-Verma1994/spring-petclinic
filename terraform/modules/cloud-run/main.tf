@@ -86,6 +86,7 @@ resource "google_cloud_run_service" "service" {
         "autoscaling.knative.dev/maxScale"        = var.max_instances
         "run.googleapis.com/cpu-throttling"       = "false"  # CPU always allocated
         "run.googleapis.com/startup-cpu-boost"    = "true"   # CPU boost during startup
+        "run.googleapis.com/cloudsql-instances"   = "${var.project_id}:europe-west4:petclinic-${var.environment}-primary"
       }
     }
   }
