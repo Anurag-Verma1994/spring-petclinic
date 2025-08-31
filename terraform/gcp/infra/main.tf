@@ -40,12 +40,7 @@ resource "google_project_iam_member" "cloudbuild_roles" {
     "roles/compute.admin",
     "roles/iam.serviceAccountAdmin",
     "roles/serviceusage.serviceUsageAdmin",
-    "roles/storage.admin",
-    "roles/secretmanager.secretAccessor",
-    "roles/secretmanager.admin",
-    "roles/cloudsql.admin",
-    "roles/cloudsql.client",
-    "roles/resourcemanager.projectIamAdmin"
+    "roles/storage.admin"
   ])
 
   project = var.project_id
