@@ -11,17 +11,17 @@ steps:
       '-backend-config=bucket=gorilla-clinic-terraform-state',
       '-backend-config=prefix=terraform/state/prod'
     ]
-    dir: 'terraform/infra'
+    dir: 'terraform/gcp/infra'
     id: 'tf-init'
 
   # Terraform Plan
   - name: 'hashicorp/terraform:1.5.0'
     args: [
       'plan',
-      '-var-file=tfvars/${_ENVIRONMENT}.tfvars',
+      '-var-file=../tfvars/${_ENVIRONMENT}.tfvars',
       '-out=tfplan'
     ]
-    dir: 'terraform/infra'
+    dir: 'terraform/gcp/infra'
     id: 'tf-plan'
 
   # Terraform Apply
@@ -31,7 +31,7 @@ steps:
       '-auto-approve',
       'tfplan'
     ]
-    dir: 'terraform/infra'
+    dir: 'terraform/gcp/infra'
     id: 'tf-apply'
 
 options:
