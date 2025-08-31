@@ -40,7 +40,11 @@ resource "google_project_iam_member" "cloudbuild_roles" {
     "roles/compute.admin",
     "roles/iam.serviceAccountAdmin",
     "roles/serviceusage.serviceUsageAdmin",
-    "roles/storage.admin"
+    "roles/storage.admin",
+    "roles/secretmanager.secretAccessor",
+    "roles/secretmanager.admin",
+    "roles/cloudsql.admin",
+    "roles/resourcemanager.projectIamAdmin"
   ])
 
   project = var.project_id
@@ -112,15 +116,6 @@ module "database" {
   secondary_region = var.secondary_region
 
   depends_on = [google_project_service.required_apis]
-}
-
-# Grant Cloud Run service account access to Secret Manager
-resource "google_project_iam_member" "secret_accessor" {
-  project = var.project_id
-  role    = "roles/secretmanager.secretAccessor"
-  member  = "serviceAccount:${google_service_account.petclinic_sa.email}"
-
-  depends_on = [google_service_account.petclinic_sa]
 }
 
 # Load Balancer configuration
