@@ -8,6 +8,7 @@ steps:
   - name: 'hashicorp/terraform:1.5.0'
     args: [
       'init',
+      '-reconfigure',
       '-backend-config=bucket=gorilla-clinic-terraform-state',
       '-backend-config=prefix=terraform/state/prod'
     ]
