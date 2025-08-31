@@ -88,6 +88,7 @@ module "cloud_build" {
   repository_id        = var.repository_id
   service_account_email = google_service_account.petclinic_sa.email
   location             = var.location
+  environment          = var.environment
 
   depends_on = [
     google_project_service.required_apis,
