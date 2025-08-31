@@ -35,9 +35,8 @@ resource "google_cloudbuild_trigger" "app_trigger" {
   }
 }
 
-# Infrastructure deployment triggers for each environment
-resource "google_cloudbuild_trigger" "infrastructure_triggers" {
-
+# Infrastructure deployment trigger
+resource "google_cloudbuild_trigger" "infrastructure_trigger" {
   name        = "petclinic-terraform-trigger"
   description = "Deploy infrastructure when Terraform files change"
   project     = var.project_id
