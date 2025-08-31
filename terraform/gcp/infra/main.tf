@@ -10,7 +10,9 @@ resource "google_project_service" "required_apis" {
     "artifactregistry.googleapis.com",
     "dns.googleapis.com",
     "compute.googleapis.com",
-    "iam.googleapis.com"
+    "iam.googleapis.com",
+    "sqladmin.googleapis.com",
+    "secretmanager.googleapis.com"
   ])
   
   project = var.project_id
@@ -57,6 +59,7 @@ module "cloud_run_primary" {
   max_instances         = var.max_instances
   container_concurrency = var.container_concurrency
   service_account_email = google_service_account.petclinic_sa.email
+  environment           = var.environment
 
   depends_on = [google_project_service.required_apis]
 }
@@ -73,6 +76,7 @@ module "cloud_run_secondary" {
   max_instances         = var.max_instances
   container_concurrency = var.container_concurrency
   service_account_email = google_service_account.petclinic_sa.email
+  environment           = var.environment
 
   depends_on = [google_project_service.required_apis]
 }
@@ -95,6 +99,30 @@ module "cloud_build" {
     google_service_account.petclinic_sa,
     google_project_iam_member.cloudbuild_roles
   ]
+}
+
+# Database configuration
+module "database" {
+  source = "../../modules/database"
+
+  project_id       = var.project_id
+  environment      = var.environment
+  region          = var.primary_region
+  secondary_region = var.secondary_region
+  database_name    = "petclinic"
+  database_tier    = var.database_tier
+
+
+  depends_on = [google_project_service.required_apis]
+}
+
+# Grant Cloud Run service account access to Secret Manager
+resource "google_project_iam_member" "secret_accessor" {
+  project = var.project_id
+  role    = "roles/secretmanager.secretAccessor"
+  member  = "serviceAccount:${google_service_account.petclinic_sa.email}"
+
+  depends_on = [google_service_account.petclinic_sa]
 }
 
 # Load Balancer configuration
