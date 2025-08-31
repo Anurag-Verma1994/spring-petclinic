@@ -35,25 +35,8 @@ variable "location" {
   default     = "europe-west4"
 }
 
-variable "environment_branch_mappings" {
-  description = "Map of environments to their corresponding branch and approval configurations"
-  type = map(object({
-    branch = string
-    approval_required = bool
-  }))
-  default = {
-    prod = {
-      branch = "main"
-      approval_required = false
-    }
-    staging = {
-      branch = "staging"
-      approval_required = false
-    }
-    test = {
-      branch = "test"
-      approval_required = false
-    }
-  }
-}
 
+variable "environment" {
+  description = "The environment for the deployment"
+  type        = string
+}
