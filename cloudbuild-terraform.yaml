@@ -9,7 +9,7 @@ steps:
     args: [
       'init',
       '-backend-config=bucket=gorilla-clinic-terraform-state',
-      '-backend-config=prefix=terraform/state/${_ENVIRONMENT}'
+      '-backend-config=prefix=terraform/state/prod'
     ]
     dir: 'terraform'
     id: 'tf-init'
