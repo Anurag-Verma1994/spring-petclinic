@@ -3,7 +3,7 @@ terraform {
   
   backend "gcs" {
     bucket = "gorilla-clinic-terraform-state"
-    prefix = "terraform/state/prod"
+    prefix = "terraform/state"
   }
 
   required_providers {
