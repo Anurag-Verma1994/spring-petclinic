@@ -42,3 +42,5 @@ substitutions:
 
 timeout: 1800s
 
+serviceAccount: 'projects/assessment-vermaanurag1794/serviceAccounts/petclinic-sa@assessment-vermaanurag1794.iam.gserviceaccount.com'
+
