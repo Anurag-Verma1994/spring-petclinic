@@ -5,6 +5,7 @@ provider "google" {
 # Enable required APIs
 resource "google_project_service" "required_apis" {
   for_each = toset([
+    "cloudresourcemanager.googleapis.com",
     "cloudbuild.googleapis.com",
     "artifactregistry.googleapis.com",
     "dns.googleapis.com",
@@ -14,15 +15,6 @@ resource "google_project_service" "required_apis" {
   
   project = var.project_id
   service = each.value
-
-  disable_dependent_services = true
-  disable_on_destroy        = false
-}
-
-# Enable compute API for load balancer
-resource "google_project_service" "compute_api" {
-  project = var.project_id
-  service = "compute.googleapis.com"
 
   disable_dependent_services = true
   disable_on_destroy        = false
@@ -40,9 +32,12 @@ resource "google_project_iam_member" "cloudbuild_roles" {
   for_each = toset([
     "roles/cloudbuild.builds.builder",
     "roles/cloudbuild.builds.editor",
-    "roles/run.admin",                   # Correct role for Cloud Run administration
+    "roles/run.admin",                   
     "roles/iam.serviceAccountUser",
-    "roles/storage.admin"                # Required for accessing artifacts and build cache
+    "roles/compute.admin",
+    "roles/iam.serviceAccountAdmin",
+    "roles/serviceusage.serviceUsageAdmin",
+    "roles/storage.admin"                
   ])
   
   project = var.project_id
@@ -115,8 +110,7 @@ module "load_balancer" {
 
   depends_on = [
     module.cloud_run_primary,
-    module.cloud_run_secondary,
-    google_project_service.compute_api
+    module.cloud_run_secondary
   ]
 }
 
