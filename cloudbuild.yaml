@@ -78,8 +78,8 @@ substitutions:
   _ENVIRONMENT: prod
   _PRIMARY_REGION: europe-west4
   _SECONDARY_REGION: europe-west3
-  _MIN_INSTANCES: "10"    # Warm pool for quick response
-  _MAX_INSTANCES: "400"   # Handle peak load with buffer
+  _MIN_INSTANCES: "0"    
+  _MAX_INSTANCES: "400"   
 
 options:
   logging: CLOUD_LOGGING_ONLY
