@@ -43,6 +43,48 @@ variable "service_account_name" {
   type        = string
 }
 
+variable "service_account_roles" {
+  description = "List of IAM roles to grant to the service account"
+  type        = list(string)
+  default = [
+    "roles/cloudbuild.builds.builder",
+    "roles/cloudbuild.builds.editor",
+    "roles/run.admin",
+    "roles/iam.serviceAccountUser",
+    "roles/compute.admin",
+    "roles/iam.serviceAccountAdmin",
+    "roles/serviceusage.serviceUsageAdmin",
+    "roles/storage.admin"
+  ]
+}
+
+variable "required_apis" {
+  description = "List of Google Cloud APIs to enable"
+  type        = list(string)
+  default = [
+    "cloudresourcemanager.googleapis.com",
+    "cloudbuild.googleapis.com",
+    "artifactregistry.googleapis.com",
+    "dns.googleapis.com",
+    "compute.googleapis.com",
+    "iam.googleapis.com",
+    "sqladmin.googleapis.com",
+    "secretmanager.googleapis.com"
+  ]
+}
+
+variable "disable_dependent_services" {
+  description = "Whether to disable dependent services when destroying"
+  type        = bool
+  default     = true
+}
+
+variable "disable_on_destroy" {
+  description = "Whether to disable services when destroying"
+  type        = bool
+  default     = false
+}
+
 variable "image" {
   description = "Container image to deploy"
   type        = string
@@ -87,6 +129,72 @@ variable "primary_service_name" {
 variable "secondary_service_name" {
   description = "Name for the secondary Cloud Run service"
   type        = string
+}
+
+variable "cpu_limit" {
+  description = "CPU limit for the container"
+  type        = string
+  default     = "4.0"
+}
+
+variable "memory_limit" {
+  description = "Memory limit for the container"
+  type        = string
+  default     = "4Gi"
+}
+
+variable "startup_probe_initial_delay" {
+  description = "Initial delay seconds for startup probe"
+  type        = number
+  default     = 30
+}
+
+variable "startup_probe_timeout" {
+  description = "Timeout seconds for startup probe"
+  type        = number
+  default     = 10
+}
+
+variable "startup_probe_period" {
+  description = "Period seconds for startup probe"
+  type        = number
+  default     = 10
+}
+
+variable "startup_probe_failure_threshold" {
+  description = "Failure threshold for startup probe"
+  type        = number
+  default     = 6
+}
+
+variable "startup_probe_path" {
+  description = "Health check path for startup probe"
+  type        = string
+  default     = "/actuator/health"
+}
+
+variable "backend_timeout_sec" {
+  description = "Backend service timeout in seconds"
+  type        = number
+  default     = 30
+}
+
+variable "enable_cdn" {
+  description = "Enable CDN for the backend service"
+  type        = bool
+  default     = true
+}
+
+variable "health_check_timeout_sec" {
+  description = "Health check timeout in seconds"
+  type        = number
+  default     = 5
+}
+
+variable "health_check_interval_sec" {
+  description = "Health check interval in seconds"
+  type        = number
+  default     = 10
 }
 
 

@@ -1,51 +1,13 @@
-provider "google" {
-  project = var.project_id
-  region  = var.primary_region
-}
+# IAM configuration
+module "iam" {
+  source = "../../modules/iam"
 
-# Enable required APIs
-resource "google_project_service" "required_apis" {
-  for_each = toset([
-    "cloudresourcemanager.googleapis.com",
-    "cloudbuild.googleapis.com",
-    "artifactregistry.googleapis.com",
-    "dns.googleapis.com",
-    "compute.googleapis.com",
-    "iam.googleapis.com",
-    "sqladmin.googleapis.com",
-    "secretmanager.googleapis.com"
-  ])
-
-  project = var.project_id
-  service = each.value
-
-  disable_dependent_services = true
-  disable_on_destroy         = false
-}
-
-# Create service account
-resource "google_service_account" "petclinic_sa" {
-  account_id   = var.service_account_name
-  display_name = "PetClinic Service Account"
-  project      = var.project_id
-}
-
-# Grant Cloud Build Service Account role
-resource "google_project_iam_member" "cloudbuild_roles" {
-  for_each = toset([
-    "roles/cloudbuild.builds.builder",
-    "roles/cloudbuild.builds.editor",
-    "roles/run.admin",
-    "roles/iam.serviceAccountUser",
-    "roles/compute.admin",
-    "roles/iam.serviceAccountAdmin",
-    "roles/serviceusage.serviceUsageAdmin",
-    "roles/storage.admin"
-  ])
-
-  project = var.project_id
-  role    = each.value
-  member  = "serviceAccount:${google_service_account.petclinic_sa.email}"
+  project_id                  = var.project_id
+  service_account_name        = var.service_account_name
+  service_account_roles       = var.service_account_roles
+  required_apis              = var.required_apis
+  disable_dependent_services = var.disable_dependent_services
+  disable_on_destroy         = var.disable_on_destroy
 }
 
 
@@ -60,10 +22,21 @@ module "cloud_run_primary" {
   min_instances         = var.min_instances
   max_instances         = var.max_instances
   container_concurrency = var.container_concurrency
-  service_account_email = google_service_account.petclinic_sa.email
+  service_account_email = module.iam.service_account_email
   environment           = var.environment
+  
+  # Resource limits
+  cpu_limit             = var.cpu_limit
+  memory_limit          = var.memory_limit
+  
+  # Startup probe configuration
+  startup_probe_initial_delay     = var.startup_probe_initial_delay
+  startup_probe_timeout          = var.startup_probe_timeout
+  startup_probe_period           = var.startup_probe_period
+  startup_probe_failure_threshold = var.startup_probe_failure_threshold
+  startup_probe_path             = var.startup_probe_path
 
-  depends_on = [google_project_service.required_apis]
+  depends_on = [module.iam]
 }
 
 # Secondary region Cloud Run service
@@ -77,10 +50,21 @@ module "cloud_run_secondary" {
   min_instances         = var.min_instances
   max_instances         = var.max_instances
   container_concurrency = var.container_concurrency
-  service_account_email = google_service_account.petclinic_sa.email
+  service_account_email = module.iam.service_account_email
   environment           = var.environment
+  
+  # Resource limits
+  cpu_limit             = var.cpu_limit
+  memory_limit          = var.memory_limit
+  
+  # Startup probe configuration
+  startup_probe_initial_delay     = var.startup_probe_initial_delay
+  startup_probe_timeout          = var.startup_probe_timeout
+  startup_probe_period           = var.startup_probe_period
+  startup_probe_failure_threshold = var.startup_probe_failure_threshold
+  startup_probe_path             = var.startup_probe_path
 
-  depends_on = [google_project_service.required_apis]
+  depends_on = [module.iam]
 }
 
 # Cloud Build configuration
@@ -92,14 +76,12 @@ module "cloud_build" {
   github_repo           = var.github_repo
   branch_pattern        = var.branch_pattern
   repository_id         = var.repository_id
-  service_account_email = google_service_account.petclinic_sa.email
+  service_account_email = module.iam.service_account_email
   location              = var.location
   environment           = var.environment
 
   depends_on = [
-    google_project_service.required_apis,
-    google_service_account.petclinic_sa,
-    google_project_iam_member.cloudbuild_roles
+    module.iam
   ]
 }
 
@@ -114,6 +96,13 @@ module "load_balancer" {
   secondary_service_name   = module.cloud_run_secondary.service_name
   secondary_service_region = var.secondary_region
   domain_name              = var.domain_name
+  
+  # Load balancer configuration
+  backend_timeout_sec         = var.backend_timeout_sec
+  enable_cdn                  = var.enable_cdn
+  health_check_timeout_sec    = var.health_check_timeout_sec
+  health_check_interval_sec   = var.health_check_interval_sec
+  health_check_path          = var.startup_probe_path
 
   depends_on = [
     module.cloud_run_primary,

@@ -42,3 +42,45 @@ variable "environment" {
   description = "Environment name (e.g., prod, dev)"
   type        = string
 }
+
+variable "cpu_limit" {
+  description = "CPU limit for the container"
+  type        = string
+  default     = "4.0"
+}
+
+variable "memory_limit" {
+  description = "Memory limit for the container"
+  type        = string
+  default     = "4Gi"
+}
+
+variable "startup_probe_initial_delay" {
+  description = "Initial delay seconds for startup probe"
+  type        = number
+  default     = 30
+}
+
+variable "startup_probe_timeout" {
+  description = "Timeout seconds for startup probe"
+  type        = number
+  default     = 10
+}
+
+variable "startup_probe_period" {
+  description = "Period seconds for startup probe"
+  type        = number
+  default     = 10
+}
+
+variable "startup_probe_failure_threshold" {
+  description = "Failure threshold for startup probe"
+  type        = number
+  default     = 6
+}
+
+variable "startup_probe_path" {
+  description = "Health check path for startup probe"
+  type        = string
+  default     = "/actuator/health"
+}

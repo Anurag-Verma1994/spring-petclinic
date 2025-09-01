@@ -10,18 +10,18 @@ resource "google_cloud_run_service" "service" {
         image = var.image
         resources {
           limits = {
-            cpu    = "4.0"
-            memory = "4Gi"
+            cpu    = var.cpu_limit
+            memory = var.memory_limit
           }
         }
 
         startup_probe {
-          initial_delay_seconds = 30
-          timeout_seconds      = 10
-          period_seconds      = 10
-          failure_threshold   = 6
+          initial_delay_seconds = var.startup_probe_initial_delay
+          timeout_seconds      = var.startup_probe_timeout
+          period_seconds      = var.startup_probe_period
+          failure_threshold   = var.startup_probe_failure_threshold
           http_get {
-            path = "/actuator/health"
+            path = var.startup_probe_path
           }
         }
       }

@@ -24,20 +24,20 @@ resource "google_compute_managed_ssl_certificate" "gorilla_clinic_cert" {
 resource "google_compute_backend_service" "gorilla_clinic_backend" {
   name                  = "${var.name}-backend"
   project              = var.project_id
-  protocol             = "HTTPS"
-  port_name            = "http"
+  protocol             = var.backend_protocol
+  port_name            = var.backend_port_name
   load_balancing_scheme = "EXTERNAL_MANAGED"
-  timeout_sec          = 30
-  enable_cdn           = true
+  timeout_sec          = var.backend_timeout_sec
+  enable_cdn           = var.enable_cdn
 
   backend {
     group = google_compute_region_network_endpoint_group.primary_neg.id
-    capacity_scaler = 1.0
+    capacity_scaler = var.primary_capacity_scaler
   }
 
   backend {
     group = google_compute_region_network_endpoint_group.secondary_neg.id
-    capacity_scaler = 1.0
+    capacity_scaler = var.secondary_capacity_scaler
   }
 
   log_config {
@@ -51,14 +51,14 @@ resource "google_compute_backend_service" "gorilla_clinic_backend" {
 resource "google_compute_health_check" "gorilla_clinic_health_check" {
   name               = "${var.name}-health-check"
   project           = var.project_id
-  timeout_sec       = 5
-  check_interval_sec = 10
+  timeout_sec       = var.health_check_timeout_sec
+  check_interval_sec = var.health_check_interval_sec
 
   http_health_check {
-    port               = 80
+    port               = var.health_check_port
     port_specification = "USE_FIXED_PORT"
     proxy_header       = "NONE"
-    request_path       = "/actuator/health"
+    request_path       = var.health_check_path
   }
 }
 
@@ -86,7 +86,7 @@ resource "google_compute_global_forwarding_rule" "gorilla_clinic_forwarding_rule
   name                  = "${var.name}-forwarding-rule"
   project              = var.project_id
   target               = google_compute_target_https_proxy.gorilla_clinic_proxy.id
-  port_range           = "443"
+  port_range           = var.ssl_port_range
   load_balancing_scheme = "EXTERNAL_MANAGED"
   ip_address           = google_compute_global_address.gorilla_clinic_ip.address
 }

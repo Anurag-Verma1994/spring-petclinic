@@ -10,5 +10,5 @@ resource "google_dns_record_set" "global" {
   type         = "A"
   ttl          = 300
   managed_zone = google_dns_managed_zone.petclinic.name
-  rrdatas      = [var.global_lb_ip]    # Using the global load balancer IP
+  rrdatas      = [var.global_lb_ip]    
 }
