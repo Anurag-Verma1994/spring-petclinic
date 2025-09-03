@@ -78,7 +78,7 @@ substitutions:
   _ENVIRONMENT: prod
   _PRIMARY_REGION: europe-west4
   _SECONDARY_REGION: europe-west3
-  _MIN_INSTANCES: "0"    
+  _MIN_INSTANCES: "10"    
   _MAX_INSTANCES: "400"   
 
 options:
