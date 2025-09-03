@@ -3,7 +3,7 @@ primary_region = "europe-west4"
 secondary_region = "europe-west3"
 environment = "prod"
 domain_name = "gorillaclinic.nl"
-min_instances = 0
+min_instances = 10
 max_instances = 400
 container_concurrency = 80
 service_account_name = "petclinic-sa"
@@ -52,10 +52,10 @@ cpu_limit = "4.0"
 memory_limit = "4Gi"
 
 # Startup probe configuration
-startup_probe_initial_delay = 30
-startup_probe_timeout = 10
-startup_probe_period = 10
-startup_probe_failure_threshold = 6
+startup_probe_initial_delay = 10
+startup_probe_timeout = 5
+startup_probe_period = 5
+startup_probe_failure_threshold = 3
 startup_probe_path = "/actuator/health"
 
 # Load balancer configuration
