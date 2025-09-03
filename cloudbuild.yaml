@@ -3,7 +3,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build',
-      '-t', 'gcr.io/$PROJECT_ID/petclinic:$COMMIT_SHA',
+      '-t', 'gcr.io/$PROJECT_ID/petclinic:$BUILD_ID',
       '-t', 'gcr.io/$PROJECT_ID/petclinic:latest',
       '.'
     ]
@@ -11,7 +11,7 @@ steps:
 
   # Push both tags to Container Registry
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/petclinic:$COMMIT_SHA']
+    args: ['push', 'gcr.io/$PROJECT_ID/petclinic:$BUILD_ID']
     id: 'push-sha'
 
   - name: 'gcr.io/cloud-builders/docker'
@@ -85,5 +85,5 @@ options:
   logging: CLOUD_LOGGING_ONLY
 
 images:
-  - 'gcr.io/$PROJECT_ID/petclinic:$COMMIT_SHA'
+  - 'gcr.io/$PROJECT_ID/petclinic:$BUILD_ID'
   - 'gcr.io/$PROJECT_ID/petclinic:latest'
