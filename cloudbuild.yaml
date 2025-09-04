@@ -75,7 +75,7 @@ steps:
       - '80'
 
 substitutions:
-  _ENVIRONMENT: prod
+  _ENVIRONMENT: test
   _PRIMARY_REGION: europe-west4
   _SECONDARY_REGION: europe-west3
   _MIN_INSTANCES: "10"    
